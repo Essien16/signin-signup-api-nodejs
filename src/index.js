@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const app = express();
+// const login = require('./routes/login')
 const mongoose = require('mongoose');
 const dotenv = require("dotenv");
 dotenv.config();
@@ -30,3 +31,4 @@ app.use('/', require('./routes/login'));
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, console.log("Port activated at port " + PORT))
+
