@@ -7,18 +7,21 @@ const signUpView = (req, res) => {
     } );
 }
 
-const signUpUser = (req, res) => {
-    const { name, email, password, confirm } = req.body;
+const signUpUser = async (req, res) => {
+    const { name, email, password, confirm } = await req.body;
     if (!name || !email || !password || !confirm) {
+      return res.status(400).send("Required fields are empty");
       console.log("Required fields are empty");
     }
     //Confirm Passwords
     if (password !== confirm) {
-      console.log("Password doesn't match");
+      return res.status(400).send("Password does not match");
+      console.log("Password does not match")
     } else {
       //Validation
       User.findOne({ email: email }).then((user) => {
         if (user) {
+          res.status(409).send("User with this email exists")
           console.log("User with this email exists");
           res.render("signup", {
             name,
@@ -53,23 +56,30 @@ const loginView = (req, res) => {
     res.render("login", {
     } );
 }
-const loginUser = (req, res) => {
-    const { email, password } = req.body;
+
+
+const loginUser = async (req, res) => {
+    const { email, password } = await req.body;
     //Required
-    if (!email || !password) {
-      console.log("Please fill in all the fields");
-      res.render("login", {
-        email,
-        password,
-      });
-    } else {
+    try {
+      if (!email || !password) {
+        return res.status(400).send("Please fill in all the fields");
+        console.log("Please fill in all the fields");
+        res.render("login", {
+          email,
+          password,
+        });
+      } else {
       passport.authenticate("local", {
         successRedirect: "/home",
         failureRedirect: "/login",
         failureFlash: true,
       })(req, res);
     }
-  };
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 module.exports =  {
     signUpView,
