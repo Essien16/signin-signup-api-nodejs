@@ -2,6 +2,7 @@ const passport = require("passport");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const Joi = require('joi')
+const jwt = require("jsonwebtoken")
 
 const signUpView = (req, res) => {
     res.render("signup", {
@@ -46,6 +47,7 @@ const signUpUser = async (req, res) => {
             email,
             password,
           });
+          
           bcrypt.genSalt(10, (err, salt) =>
             bcrypt.hash(newUser.password, salt, (err, hash) => {
               if (err) throw err;
@@ -54,8 +56,8 @@ const signUpUser = async (req, res) => {
                 .save()
                 .then(res.redirect("/login"))
                 .catch((err) => console.log(err));
-            })
-          );
+             })
+           );
         }
       });
     }
@@ -69,7 +71,7 @@ const loginView = (req, res) => {
 }
 
 
-const loginUser = (req, res) => {
+const loginUser = async (req, res) => {
     const { email, password } = req.body;
     //Required
     try {
@@ -80,17 +82,45 @@ const loginUser = (req, res) => {
           email,
           password,
         });
-      } else {
-      passport.authenticate("local", {
-        successRedirect: "/home",
-        failureRedirect: "/login",
-        failureFlash: true,
-      })(req, res);
-    }
+      }
+      const user = await User.findOne({email:email})
+      // console.log(req.body)
+    
+      const validatePassword = await bcrypt.compare(req.body.password, user.password)
+     
+      if (validatePassword) {
+        const tokenObject = jwtToken(User);
+        res.redirect("/home")
+      } else return res.status(400).send("Invalid email or password")
+    //   } else {
+    //   passport.authenticate("local", {
+    //     successRedirect: "/home",
+    //     failureRedirect: "/login",
+    //     failureFlash: true,
+    //   })(req, res);
+    // }
+  
   } catch (error) {
     console.log(error.message);
   }
 };
+
+
+function jwtToken(user) {
+  const _id = user._id;
+  const expiresIn = '7d';
+  
+  const jwt_payload = {
+    sub: _id,
+    iat: Date.now()
+  };
+
+  const jwt_token = jwt.sign(jwt_payload, process.env.PRIVATE_KEY, { expiresIn: expiresIn, algorithm: 'HS256'});
+  return {
+    token: "Bearer " + jwt_token,
+    expiresIn: expiresIn
+  }
+}
 
 module.exports =  {
     signUpView,

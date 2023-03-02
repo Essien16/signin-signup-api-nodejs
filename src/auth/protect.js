@@ -12,6 +12,6 @@ const protectRoute = (req, res, next) =>{
     res.redirect('/home');      
   }
   module.exports = {
-      protectRoute,
-      allowIf,
+       protectRoute,
+       allowIf,
     };

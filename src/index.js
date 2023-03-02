@@ -24,6 +24,7 @@ app.use(session({
     resave: true
   }));
 
+
 app.use(passport.initialize());
 app.use(passport.session());
 

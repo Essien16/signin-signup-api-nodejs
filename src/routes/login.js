@@ -15,7 +15,7 @@ const router = express.Router();
 router.get("/signup", signUpView);
 router.get("/login", loginView);
 
-router.get("/home", protectRoute, homeView);
+router.get("/home",protectRoute, homeView);
 
 router.post("/signup", signUpUser);
 router.post("/login", loginUser);
