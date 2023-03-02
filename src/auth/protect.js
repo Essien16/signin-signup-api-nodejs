@@ -1,6 +1,6 @@
 const protectRoute = (req, res, next) =>{
     if (req.isAuthenticated()) {
-      return next();
+      next();
     }
     console.log('Please log in to continue');
     res.redirect('/login');
