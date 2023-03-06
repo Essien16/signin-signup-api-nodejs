@@ -90,7 +90,8 @@ const loginUser = async (req, res) => {
      
       if (validatePassword) {
         const tokenObject = jwtToken(User);
-        res.redirect("/home")
+        // res.redirect("/home")
+        return res.status(200).send({tokenObject})
       } else return res.status(400).send("Invalid email or password")
     //   } else {
     //   passport.authenticate("local", {
@@ -117,7 +118,7 @@ function jwtToken(user) {
 
   const jwt_token = jwt.sign(jwt_payload, process.env.PRIVATE_KEY, { expiresIn: expiresIn, algorithm: 'HS256'});
   return {
-    token: "Bearer " + jwt_token,
+    token: jwt_token,
     expiresIn: expiresIn
   }
 }

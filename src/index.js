@@ -1,6 +1,7 @@
 const express = require('express');
 const session = require('express-session');
 const app = express();
+// const path = require("path");
   // const login = require('./routes/login')
 const mongoose = require('mongoose');
 const dotenv = require("dotenv");
@@ -16,6 +17,9 @@ mongoose.connect(database, {useUnifiedTopology: true, useNewUrlParser: true })
 .catch(error => console.log(error));
 
 app.set('view engine', 'ejs');
+
+// app.use(express.static(__dirname + "././public"));
+app.use("/public", express.static("public"))
 
 app.use(express.urlencoded({extended: false}));
 app.use(session({
